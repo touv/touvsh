@@ -1,0 +1,148 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME} [ -f | --files]
+            [ -d | --database ]
+
+	DETAILS :
+    Sauvegarde en local de la base mysql ou des fichiers hébergés chez Ouvaton
+
+	EXEMPLES :
+    ${SCRIPT_NAME} -f -u user:pass@ftp.ouvaton.org
+    ${SCRIPT_NAME} --database -c user:pass@name
+
+
+EOF
+  exit 0;
+}
+# }}}
+
+# {{{ Initialisation
+DBFLAG=0
+FTPFLAG=0
+PROXY=
+# }}}
+
+# {{{ Analyse des parametres
+NEXT=""
+for argument in $*
+do
+    if [ ! -z "${NEXT}" ]
+    then
+        CMD="if [ -z \"\${${NEXT}}\" ]; then export ${NEXT}=\"${argument}\"; else export ${NEXT}=\"\${${NEXT}} ${argument}\"; fi;"
+        eval ${CMD}
+        NEXT=""
+    else
+        case $argument in
+            -h | --help )
+            usage
+            ;;
+            -f | --file )
+            FTPFLAG=1
+            ;;
+            -d | --database )
+            DBFLAG=1
+            ;;
+            --proxy )
+            NEXT=PROXY
+            ;;
+            -t | --target )
+            NEXT=DSTPATH
+            ;;
+            -c | --cnxstr )
+            NEXT=CNXSTR
+            ;;
+            -u | --ftpurl )
+            NEXT=FTPURL
+            ;;
+            * )
+            ;;
+        esac
+    fi
+done
+# }}}
+
+# {{{ Valeur par defaut
+# Paramètres FTP
+FTPURL=${FTPURL:="login:password@ftp.ouvaton.org"}
+FTPUSER=`echo $FTPURL | cut -d ":" -f 1`
+FTPPWD=`echo $FTPURL | cut -d ":" -f 2 | cut -d "@" -f1`
+FTPHOST=`echo $FTPURL | cut -d ":" -f 2 | cut -d "@" -f2`
+
+# Parametres MySQL
+CNXSTR=${CNXSTR:="login:password@database"}
+DBUSER=`echo $CNXSTR | cut -d ":" -f 1`
+DBPWD=`echo $CNXSTR | cut -d ":" -f 2 | cut -d "@" -f1`
+DBNAME=`echo $CNXSTR | cut -d ":" -f 2 | cut -d "@" -f2`
+
+# Parametres Local
+DSTPATH=${DSTPATH:="."}
+DATENOW=`date '+%Y%m%d'`
+# }}}
+
+# {{{ Controles
+if [[ ${#} -eq 0 ]]
+then
+    usage
+fi
+
+if [[ ${CNXSTR} -eq "login:password@database" ]]
+????
+# }}}
+
+# {{{ Traitement
+RM=rm
+TAR=tar
+GZIP=gzip
+CURL=curl
+MKDIR=mkdir
+
+ORGPATH=`pwd`
+cd $DSTPATH
+
+# Backup de la base
+if [[ ${DBFLAG} -eq 1 ]]
+then
+    if [ ! -z ${PROXY} ]; then
+        CMDPROXY="--proxy ${PROXY}"
+    else
+        CMDPROXY=
+    fi
+    
+    $CURL \
+    $CMDPROXY \
+    -u $DBUSER:$DBPWD \
+    -d "db=${DBNAME}" \
+    -d 'what=data' \
+    -d 'drop=1' -d 'showcolomns=yes' -d 'extended_ins=yes' -d'use_backquotes=1' \
+    -d 'asfile=sendit' \
+    -d 'gzip=gzip' \
+    -d 'server=1' \
+    -d 'lang=fr-iso-8859-1'\
+    -o db.$DBNAME.$DATENOW.gz \
+    "https://ssl.ouvaton.coop/panel/phpMyAdmin/tbl_dump.php"
+fi
+
+# Backup des fichiers
+if [[ ${FTPFLAG} -eq 1 ]]
+then    
+    if [ ! -d mirror ] ; then
+        $MKDIR mirror
+    fi
+    cd mirror
+    lftp -u $FTPUSER,$FTPPWD -e "mirror -x cache/ -n -e ; quit" $FTPHOST
+    tar czvf ../file.$FTPUSER.$DATENOW.tar.gz ./*
+#    cd ..
+#    bzip2 -9 file.$DATENOW.site.tar
+fi
+
+cd $ORGPATH
+# vim: fdm=marker

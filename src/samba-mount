@@ -1,0 +1,70 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME} POINT_DE_MONTAGE
+
+	DETAILS :
+	    On attache un point de montage samba dans une arborescence significative.
+        //host/user => /mnt/host/user
+
+	EXEMPLE :
+	    ${SCRIPT_NAME} //disthost/thouveni
+
+    ENVIRONNEMENT :
+        Les variables suivantes peuvent être surchargées :
+        SMBMNT_CREDENTIALS : Fichiers contenant les logins/motdepasses
+        SMBMNT_PATH : Destination des points de montages
+      
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+# {{{ Variables de Configuration
+SMBMNT_PATH=${SMBMNT_PATH:="/mnt"}
+SMBMNT_CREDENTIALS=${SMBMNT_CREDENTIALS:="/home/thouveni/etc/.smb_credentials"}
+# }}}
+
+if [[ ${#} -eq 0 ]]
+    then
+    usage
+fi
+
+
+function monter {
+
+t=`echo ${1} |  sed -e 's/^.//'`
+chemin="${SMBMNT_PATH}${t}"
+if [[ ! -d ${chemin} ]]; then
+    mkdir -p ${chemin}
+fi
+
+truc=`mount | grep ${chemin}`
+if [ ! -n "${truc}" ]; then 
+    echo "Montage de ${1}"
+    smbmount ${1} ${chemin} -o credentials=${SMBMNT_CREDENTIALS}
+else 
+    echo "${1} déja monté !"
+fi
+}
+
+monter $1
+
+# vim: fdm=marker

@@ -1,0 +1,117 @@
+#!/bin/sh
+
+#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
+#-----                                                                 -----
+#-----  Remplacer une chaine de caracteres dans plusieurs fichiers     -----
+#-----                                                                 -----
+#---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
+
+
+
+#       --{--{--{--{--{--{--{--{--}--}--}--}--}--}--}--}--
+#       --{                                            }--
+#       --{     Definitions Variables Internes         }--
+#       --{                                            }--
+#       --{--{--{--{--{--{--{--{--}--}--}--}--}--}--}--}--
+
+SCRIPT_NAME=`basename $0`
+OPTION_NEXT="no"
+OPTION_TAB[0]=
+OPTION_TAB[1]=
+OPTION_TAB[2]=
+OPTION_INDICE=
+OPTION_VALUE=
+
+
+#       --{--{--{--{--{--{--{--{--}--}--}--}--}--}--}--}--
+#       --{                                            }--
+#       --{     Definitions de Fonctions               }--
+#       --{                                            }--
+#       --{--{--{--{--{--{--{--{--}--}--}--}--}--}--}--}--
+
+
+function usage {
+
+    cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME} [-i]
+
+	DETAILS :
+               Remplace une chaine par une autre dans plusieurs fichiers
+
+
+	EXEMPLES :
+		$SCRIPT_NAME -i
+
+EOF
+    exit 0;
+}
+
+if [[ ${#} -eq 0 ]]
+    then
+    usage
+fi
+
+for argument in $*
+  do
+  case $argument in
+      -i | --interatif )
+	  echo "Repertoire:"
+	  read -r LECHEMIN
+	  echo "Dans fichiers/types:"
+	  read -r LESTYPES
+	  echo "Rechercher:"
+	  read -r SEARCH
+	  echo "Remplacer avec:"
+	  read -r REPLACE
+	  break
+	  ;;
+      -h | --help )
+	  usage
+	  ;;
+      * )
+	  ;;
+  esac
+done
+
+
+
+if [[ ! -d ${LECHEMIN} ]]
+    then
+    echo "Repertoire [$LECHEMIN] incorrect"
+    exit 1
+fi
+if [[ -z ${LESTYPES} ]]
+    then
+    echo "Fichiers/Types vide"
+    exit 2
+fi
+if [[ -z ${SEARCH} ]]
+    then
+    echo "Masque de Recherche vide"
+    exit 3
+fi
+if [[ -z ${SEARCH} ]]
+    then
+    echo "Masque de Remplacement vide"
+    exit 4
+fi
+
+
+lesfichiers=`find ${LECHEMIN} -name "${LESTYPES}"`
+for fichier in $lesfichiers;
+  do
+#  cat $fichier | perl -p -e ${3} > $fichier.s
+  cat $fichier | sed s/${SEARCH}/${REPLACE}/g > $fichier.s
+  if [[ ${?} -eq 0 ]]
+      then
+      mv $fichier.s $fichier
+      echo "Replace in $fichier"
+  fi
+done;
+
+
+exit 0;

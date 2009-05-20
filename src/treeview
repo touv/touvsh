@@ -1,0 +1,56 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME}  [CHEMIN]
+
+	DETAILS :
+        Affiche le contenu d'un répertoire sous forme d'un arbre visuel
+        Rq: Si [CHEMIN] n'est pas préscié on utilise le répertoire commun
+
+
+	EXEMPLES :
+		$SCRIPT_NAME 
+		$SCRIPT_NAME ~
+
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+if [[ $# -eq 0 ]]
+then
+    CHEMIN="."
+else 
+    CHEMIN=$1    
+fi
+
+if [[ ! -d  ${CHEMIN} ]]
+then
+    usage
+fi
+
+savepath=`pwd`
+cd $CHEMIN
+
+find . -type d -print | sort -f | sed -e "s,^${CHEMIN},," -e "/^$/d" -e "s,[^/]*/\([^/]*\)$,\`-----\1," -e "s,[^/]*/, |     ,g";
+
+cd $savepath
+# vim: fdm=marker

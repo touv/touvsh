@@ -1,0 +1,83 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME}  [CHEMIN]
+
+	DETAILS :
+        On fabrique des miniatures (ou des vignettes) pour toutes les images
+        présentes dans le répetoire [CHEMIN]
+        RQ: Si [CHEMIN] n'est pas présicé on utilise le répertoire courant.
+
+
+	EXEMPLES :
+		$SCRIPT_NAME echo *.php
+		$SCRIPT_NAME echo
+
+    ENVIRONNEMENT :
+        Les variables suivantes peuvent être surchargées :
+        THUMB_DIMENSION : Dimension d'une vignette
+        THUMB_PREFIX : Préfix d'une vignette
+        
+
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+# {{{ Variables de Configuration
+THUMB_DIMENSION=${THUMB_DIMENSION:="150x150"}
+THUMB_PREFIX=${THUMB_PREFIX:="t_"}
+# }}}
+
+
+if [[ $# -eq 0 ]]
+then
+    CHEMIN="."
+else 
+    CHEMIN=$1    
+fi
+
+if [[ ! -d  ${CHEMIN} ]]
+then
+    usage
+fi
+
+savepath=`pwd`
+cd $CHEMIN
+
+for f in `ls -1 . | grep -v "^${THUMB_PREFIX}" | egrep -i '\.jpg$|\.jpeg$|\.png$|\.gif$'`
+do
+    if [ -f $f ]
+    then
+        bf=`basename $f`
+        t=${THUMB_PREFIX}$bf
+        convert $f -thumbnail ${THUMB_DIMENSION} $t 2>/dev/null 
+        if [ ${?} -ne 0 ]
+        then
+            echo "$f -> ignored"
+        else
+            echo "$f -> $t"
+        fi
+    fi
+done
+
+cd $savepath
+# vim: fdm=marker

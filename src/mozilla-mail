@@ -1,0 +1,52 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME}
+
+	DETAILS :
+        Lance Mozilla Mail, si il ya déjà une instance de Mozilla, on ne fait qu'ouvrir
+        le module Mail
+
+	EXEMPLES :
+		$SCRIPT_NAME 
+
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+
+mozilla -remote "ping()" >/dev/null 2>/dev/null
+
+if [ $? = 0 ]; then
+    mozilla -remote "xfeDoCommand(openInbox)"  >/dev/null 2>/dev/null &
+else
+    mozilla &
+    while [[ 1 ]]; do 
+        mozilla -remote "ping()" >/dev/null 2>/dev/null
+        if [ $? = 0 ]; then
+            mozilla -remote "xfeDoCommand(openInbox)"  >/dev/null 2>/dev/null &
+            break 1;
+        fi
+    done
+fi
+
+# vim: fdm=marker

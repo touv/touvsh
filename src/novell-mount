@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+# Configurer le reseau IPX
+# cette ligne est placée dans /etc/rc.local
+# /sbin/ipx_configure --auto_interface=on --auto_primary=on
+
+
+
+# le fichier contenant les parametres de montage se trouve dans ~/.nwclient
+#ncpmount  /mnt/novell/hera 
+
+ncpmount -S HERA -U thouveni.ssl.dpmi.inist.fr /mnt/novell/hera
+

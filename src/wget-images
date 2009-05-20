@@ -1,0 +1,48 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME}  URL 
+        
+	DETAILS :
+        On récupére toutes les images d'un site
+
+
+	EXEMPLES :
+		$SCRIPT_NAME http://www.yahoo.fr/
+
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+if [[ ${#} -eq 0 ]]
+then
+    usage
+fi
+
+# A terminer, le but etatn d'extraire le nom de domaine de l'URL
+# $1 www.yahoo.fr
+# $2 http://www.yahoo.fr
+
+wget -X --ignore-length -r -L -A *jpg* \
+      -R thumbnails -R tn* -R *thu* -R *v.jpg \
+      -U "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)"  \
+      -D  $1 $2

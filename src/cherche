@@ -1,0 +1,55 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME}  EXPRESSION [FILTRE]
+
+	DETAILS :
+        Recherche à partir du répertoire courant les fichiers conentant EXPRESSION
+        RQ: On peut éventuellement filtrer sur un certain type de fichier.
+
+
+	EXEMPLES :
+		$SCRIPT_NAME echo *.php
+		$SCRIPT_NAME echo
+
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+if [[ ${#} -eq 0 ]]
+then
+    usage
+fi
+
+if [[ ! -z $2 ]]
+then
+    FILTRE=" -name $2"
+else 
+    FILTRE=""
+fi
+
+#find . $FILTRE -print | xargs grep -e "$1" -H -n  | tr -s " \t" " "
+find . -type f -exec file {} \; | grep text | cut -f 1 -d : | xargs grep -e "$1" -H -n  | tr -s " \t" " "
+
+
+
+# vim: fdm=marker

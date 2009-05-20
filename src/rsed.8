@@ -1,0 +1,48 @@
+.TH rsed 1  "Lundi 22 décembre 2003" "" "TouvSH"
+
+.SH NAME
+rsed \- Remplace une chaîne de caractère dans une arborescence de fichiers
+
+.SH SYNOPSIS
+.B rsed 
+[-i] 
+
+.SH DESCRIPTION
+rsed est une commande qui surcharge l'appel à la commande sed.
+Elle permet surtout de remplacer une chaine par une autre dans 
+plusieurs fichiers. Les arguments à saisir sont : 
+.TP
+Répertoires : 
+emplacement des fichiers à traiter (ex : .)
+.TP
+Fichiers/types : 
+masque de séléction (ex : *.txt)
+.TP
+Rechercher : 
+motif sed de recherche (ex : truc)
+.TP
+Remplacer avec : 
+motif sed de remplacement (ex : bidule)
+
+.SH OPTIONS
+.TP
+\-i : Saisie interactive des paramètres
+
+
+.SH EXIT STATUS
+rsed ne renvoit pas de code retour.
+
+.SH "SEE ALSO"
+
+sed(1)
+
+.SH "PLUS d'INFORMATIONS"
+
+.PP
+touvtools web page : http://touv.ouvaton.org/documents/touvtools/
+
+.PP
+TOUV homepage : http://touv.ouvaton.org/
+
+.SH AUTHOR
+Touv aka Nicolas Thouvenin.

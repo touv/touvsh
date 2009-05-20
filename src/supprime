@@ -1,0 +1,94 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+    cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME} [-Rf]
+
+	DETAILS :
+        Supprime des fichiers de manière un peu moins violente de rm -Rf
+
+
+	EXEMPLES :
+		$SCRIPT_NAME -f truc
+        $SCRIPT_NAME -Rf *
+
+EOF
+    exit 0;
+}
+# }}}
+
+
+if [[ ${#} -eq 0 ]]
+    then
+    usage
+fi
+
+A_SUPPRIMER=
+CONFIRMATION='no'
+LES_ARGUMENTS=
+
+for argument in $*
+  do
+  case $argument in
+      -f )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -R )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -fR )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -Rf )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -rf )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -fr )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -r )
+      LES_ARGUMENTS="$LES_ARGUMENTS $argument"
+      ;;
+      -h | --help )
+	  usage
+	  ;;
+      * )
+      A_SUPPRIMER="$A_SUPPRIMER $argument"
+      ;;
+  esac
+done
+
+# ---| RM non recursif donc pas de confirmation
+if [[ -z ${LES_ARGUMENTS} ]]; then
+     /bin/rm ${A_SUPPRIMER}
+     exit $?
+fi
+
+echo ""
+echo "--------------------------------------------------------------------"
+
+find ${A_SUPPRIMER}
+
+echo "--------------------------------------------------------------------"
+echo "Etes-vous certain de vouloir supprimer tous ces fichiers [ Y | N ] ?"
+read -r CONFIRMATION
+
+
+if [[ ${CONFIRMATION} = "Y" ]]; then
+    echo "Suppression en cours ..."
+    /bin/rm $LES_ARGUMENTS $A_SUPPRIMER
+    echo "Terminé"
+else 
+    echo "Opération de suppression annulée ..."
+fi
+
+# vim: fdm=marker

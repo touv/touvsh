@@ -1,0 +1,136 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME}  [-n | --name]  NOM_ARHICHE
+                        [ [ -s | --source ] CHEMIN_SOURCE ]
+                        [ [ -t | --target ] CHEMIN_DESTINATION ]
+                        [ [ -v | --version ] NUMERO_VERSION ]
+
+	DETAILS :
+         Arhichage "versionné" de répertoire(s) ou de fichier(s).
+         
+         - Le numéro de version est par défaut fixé à 1. On peut le modifier 
+           avec l'option --version. 
+         
+         - Le numéro de révision est incrémenté automatiquement si on cosntate
+           une différence avec l'archive précédente.
+         
+         - Par défaut le répertoire source est le répertoire courant.
+        
+
+	EXEMPLES :
+        ${SCRIPT_NAME} -n exemple  -s \"*.*\" -s xml -s css  -t ./dst
+        ${SCRIPT_NAME} --name exemple -t ./dst
+        ${SCRIPT_NAME} --name exemple -t ./dst -v 2
+
+
+EOF
+    exit 0;
+}
+# }}}
+
+# {{{ Initialisation
+PREFIX=""
+SOURCE=""
+CHEMIN=""
+VERSION=""
+# }}}
+
+# {{{ Analyse des parametres
+NEXT=""
+for argument in $*
+do
+    if [ ! -z "${NEXT}" ]
+    then
+        CMD="if [ -z \"\${${NEXT}}\" ]; then export ${NEXT}=\"${argument}\"; else export ${NEXT}=\"\${${NEXT}} ${argument}\"; fi;"
+        eval ${CMD}
+        NEXT=""
+    else
+        case $argument in
+            -h | --help )
+            usage
+            ;;
+            -n | --name )
+            NEXT="PREFIX" 
+            ;; 
+            -s | --source )
+            NEXT="SOURCE" 
+            ;; 
+            -t | --target )
+            NEXT="CHEMIN" 
+            ;; 
+            -v | --version )
+            NEXT="VERSION" 
+            ;; 
+            * )
+            ;;
+        esac
+    fi
+done
+# }}}
+
+# {{{ Valeur par defaut
+SOURCE=${SOURCE:="./*"}
+VERSION=${VERSION:="1"}
+# }}}
+
+# {{{ Controles
+if [[ ${#} -eq 0 ]]
+then
+    usage
+fi
+if [[ ! -d ${CHEMIN} ]]
+    then
+    echo "Repertoire [${CHEMIN}] incorrect"
+    exit 1
+fi
+if [[ -z ${PREFIX} ]]
+then
+    echo "Nom vide !"
+    exit 2
+fi
+if [[ -z "${SOURCE}" ]]
+then
+    echo "Repertoire [${SOURCE}] incorrect"
+    exit 3
+fi
+# }}}
+
+# {{{ Traitement
+RM=rm
+TAR=tar
+GZIP=gzip
+ZDIFF=zdiff
+
+REVISION_OLD=`ls -1 ${CHEMIN}/${PREFIX}-${VERSION}.[0-9]* 2>/dev/null | tail -1 | xargs basename 2>/dev/null | cut -d"." -f2`
+REVISION=`expr $REVISION_OLD + 1 2>/dev/null`
+
+if [[ ${?} -ne 0 ]]
+then
+    REVISION=1
+fi
+
+${TAR} -hcf ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar ${SOURCE}
+${GZIP} ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar
+
+${ZDIFF} ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar.gz \
+         ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION_OLD}.tar.gz 2>/dev/null >/dev/null
+if [[ ${?} -eq 0 ]]
+then
+    # Pas de difference, on efface
+    ${RM} ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar.gz 2>/dev/null
+    echo "Aucun changement >>> " ${PREFIX}-${VERSION}.${REVISION_OLD}.tar.gz
+else 
+    echo "Nouvelle archive >>> " ${PREFIX}-${VERSION}.${REVISION}.tar.gz
+fi
+# }}}
+
+#  vim: fdm=marker

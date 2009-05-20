@@ -1,0 +1,49 @@
+.TH supprime 1  "Lundi 22 décembre 2003" "" "TouvSH"
+
+.SH NAME
+supprime \- supprime un ou plusieurs fichiers
+
+.SH SYNOPSIS
+.B supprime
+[CHEMIN] 
+
+.SH DESCRIPTION
+supprime est une commande qui surcharge l'appel à la commande rm.
+Elle fonctionne exactement de la même manière sauf qu'elle affiche 
+la liste des fichiers qui vont être supprimés et elle demande une 
+confirmation avant d'éfféctuer la veritable suppression.
+qui est utilisé.
+.PP
+Important: Supprime ne demande une confirmation que dans le cas d'une 
+suppression récursive
+
+.SH OPTIONS
+.TP
+\-f : force la suppression
+\-R : suppression récursive
+
+.SH EXAMPLES
+.TP
+Supprimer un répertoire :
+rm -Rf directory
+.TP
+Supprimer un fichier :
+supprime file.txt
+
+.SH EXIT STATUS
+supprime renvoit le code de la commande rm
+
+.SH "SEE ALSO"
+
+rm(1)
+
+.SH "PLUS d'INFORMATIONS"
+
+.PP
+touvtools web page : http://touv.ouvaton.org/documents/touvtools/
+
+.PP
+TOUV homepage : http://touv.ouvaton.org/
+
+.SH AUTHOR
+Touv aka Nicolas Thouvenin.

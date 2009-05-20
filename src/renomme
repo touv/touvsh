@@ -1,0 +1,120 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @version  $Id$
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+function usage {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME} [ -n | --name ] YYY                          
+                       [ [ -d | --directory ] XXX ] 
+                       [ [ -s | --suffix ] ZZZ ] 
+
+	DETAILS :
+        Renomme tous les fichiers d'un répertoire avec un nom unique, 
+        mais en les numérotant.
+        Si XXX n'est pas donné, on utilise le répertoire par défaut.
+        Si ZZZ n'est pas donné, on garde le suffixe du fichier.
+
+	EXEMPLES :
+		${SCRIPT_NAME} -n test
+        ${SCRIPT_NAME} --name test -d /tmp
+        ${SCRIPT_NAME} --name test -s tar.gz
+        ${SCRIPT_NAME} -n test -s tar.gz -d /tmp
+
+EOF
+    exit 0;
+}
+# }}}
+
+
+# {{{ Valeur par defaut
+PREFIX=""
+REPERTOIRE=`pwd`
+COMPTEUR=0
+SUFFIX=""
+# }}}
+
+# {{{ Analyse des parametres
+NEXT=""
+for argument in $*
+do
+    if [ ! -z "${NEXT}" ]
+    then
+        CMD="export ${NEXT}=${argument}"
+        eval ${CMD}
+        NEXT=""
+    else
+        case $argument in
+            -h | --help )
+            usage
+            ;;
+            -n | --name )
+            NEXT="PREFIX" 
+            ;; 
+            -d | --directory )
+            NEXT="REPERTOIRE" 
+            ;; 
+            -s | --suffix )
+            NEXT="SUFFIX" 
+            ;; 
+            * )
+            ;;
+        esac
+    fi
+done
+# }}}
+
+
+# {{{ Controles
+if [[ ${#} -eq 0 ]]
+then
+    usage
+fi
+if [[ ! -d ${REPERTOIRE} ]]
+    then
+    echo "Repertoire [${REPERTOIRE}] incorrect"
+    exit 1
+fi
+if [[ -z ${PREFIX} ]]
+    then
+    echo "Nom vide !"
+    exit 2
+fi
+# }}}
+
+
+# {{{ Traitement
+echo "Renommage $REPERTOIRE  ..."
+
+for filename in `ls -1 $REPERTOIRE`
+do
+    f=${REPERTOIRE}"/"${filename}
+    if [ -f $f ]
+    then
+        NOM=`basename $f ${SUFFIX}`
+        if [ -z "${SUFFIX}" ]
+        then
+            SUFFIX=`echo $NOM | cut -f 2 -d "."`
+        fi
+        COMPTEUR=`expr $COMPTEUR + 1`
+
+        echo "NOM="${NOM}
+        echo "SUFFIX="${SUFFIX}
+
+        if [ "$NOM" = "$SUFFIX" ]
+        then
+            n=$PREFIX$COMPTEUR
+        else
+            n=$PREFIX$COMPTEUR.$SUFFIX
+        fi
+        echo "$filename -> $n"
+        mv $f  ${REPERTOIRE}"/"$n
+    fi
+done
+# }}}
+
+# vim: fdm=marker
