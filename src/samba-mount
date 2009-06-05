@@ -3,7 +3,7 @@
 # @version  $Id$
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
-function usage {
+usage() {
 
 cat <<EOF
 
@@ -42,17 +42,17 @@ SMBMNT_PATH=${SMBMNT_PATH:="/mnt"}
 SMBMNT_CREDENTIALS=${SMBMNT_CREDENTIALS:="/home/thouveni/etc/.smb_credentials"}
 # }}}
 
-if [[ ${#} -eq 0 ]]
+if test ${#} -eq 0 
     then
     usage
 fi
 
 
-function monter {
+monter() {
 
 t=`echo ${1} |  sed -e 's/^.//'`
 chemin="${SMBMNT_PATH}${t}"
-if [[ ! -d ${chemin} ]]; then
+if test ! -d ${chemin} ; then
     mkdir -p ${chemin}
 fi
 

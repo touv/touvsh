@@ -4,7 +4,7 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 SCRIPT_NAME=`basename $0`
-function usage {
+usage() {
 
 cat <<EOF
 
@@ -33,12 +33,12 @@ do
 done
 # }}}
 
-if [[ ${#} -ne 1 ]]
+if test ${#} -ne 1 
 then
     usage
 fi
 
-if [[ ! -f  $1 ]]
+if test ! -f  $1 
 then
     usage
 fi

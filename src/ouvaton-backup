@@ -4,7 +4,7 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 SCRIPT_NAME=`basename $0`
-function usage {
+usage() {
 
 cat <<EOF
 
@@ -89,12 +89,12 @@ DATENOW=`date '+%Y%m%d'`
 # }}}
 
 # {{{ Controles
-if [[ ${#} -eq 0 ]]
+if test ${#} -eq 0 
 then
     usage
 fi
 
-if [[ ${CNXSTR} -eq "login:password@database" ]]
+if test ${CNXSTR} -eq "login:password@database" 
 ????
 # }}}
 
@@ -109,7 +109,7 @@ ORGPATH=`pwd`
 cd $DSTPATH
 
 # Backup de la base
-if [[ ${DBFLAG} -eq 1 ]]
+if test ${DBFLAG} -eq 1 
 then
     if [ ! -z ${PROXY} ]; then
         CMDPROXY="--proxy ${PROXY}"
@@ -132,7 +132,7 @@ then
 fi
 
 # Backup des fichiers
-if [[ ${FTPFLAG} -eq 1 ]]
+if test ${FTPFLAG} -eq 1 
 then    
     if [ ! -d mirror ] ; then
         $MKDIR mirror

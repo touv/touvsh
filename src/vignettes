@@ -4,7 +4,7 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 SCRIPT_NAME=`basename $0`
-function usage {
+usage() {
 
 cat <<EOF
 
@@ -48,14 +48,14 @@ THUMB_PREFIX=${THUMB_PREFIX:="t_"}
 # }}}
 
 
-if [[ $# -eq 0 ]]
+if test $# -eq 0 
 then
     CHEMIN="."
 else 
     CHEMIN=$1    
 fi
 
-if [[ ! -d  ${CHEMIN} ]]
+if test ! -d  ${CHEMIN} 
 then
     usage
 fi

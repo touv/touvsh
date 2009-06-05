@@ -4,7 +4,7 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 SCRIPT_NAME=`basename $0`
-function usage {
+usage() {
 
     cat <<EOF
 
@@ -25,7 +25,7 @@ EOF
 # }}}
 
 
-if [[ ${#} -eq 0 ]]
+if test ${#} -eq 0
     then
     usage
 fi
@@ -68,7 +68,8 @@ for argument in $*
 done
 
 # ---| RM non recursif donc pas de confirmation
-if [[ -z ${LES_ARGUMENTS} ]]; then
+if test -z ${LES_ARGUMENTS}
+then
      /bin/rm ${A_SUPPRIMER}
      exit $?
 fi
@@ -83,7 +84,8 @@ echo "Etes-vous certain de vouloir supprimer tous ces fichiers [ Y | N ] ?"
 read -r CONFIRMATION
 
 
-if [[ ${CONFIRMATION} = "Y" ]]; then
+if test ${CONFIRMATION} = "Y"
+then
     echo "Suppression en cours ..."
     /bin/rm $LES_ARGUMENTS $A_SUPPRIMER
     echo "Terminé"

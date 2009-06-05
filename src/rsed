@@ -32,7 +32,7 @@ OPTION_VALUE=
 #       --{--{--{--{--{--{--{--{--}--}--}--}--}--}--}--}--
 
 
-function usage {
+usage() {
 
     cat <<EOF
 
@@ -50,7 +50,7 @@ EOF
     exit 0;
 }
 
-if [[ ${#} -eq 0 ]]
+if test ${#} -eq 0 
     then
     usage
 fi
@@ -79,22 +79,22 @@ done
 
 
 
-if [[ ! -d ${LECHEMIN} ]]
+if test ! -d ${LECHEMIN} 
     then
     echo "Repertoire [$LECHEMIN] incorrect"
     exit 1
 fi
-if [[ -z ${LESTYPES} ]]
+if test -z ${LESTYPES} 
     then
     echo "Fichiers/Types vide"
     exit 2
 fi
-if [[ -z ${SEARCH} ]]
+if test -z ${SEARCH} 
     then
     echo "Masque de Recherche vide"
     exit 3
 fi
-if [[ -z ${SEARCH} ]]
+if test -z ${SEARCH} 
     then
     echo "Masque de Remplacement vide"
     exit 4
@@ -106,7 +106,7 @@ for fichier in $lesfichiers;
   do
 #  cat $fichier | perl -p -e ${3} > $fichier.s
   cat $fichier | sed s/${SEARCH}/${REPLACE}/g > $fichier.s
-  if [[ ${?} -eq 0 ]]
+  if test ${?} -eq 0 
       then
       mv $fichier.s $fichier
       echo "Replace in $fichier"

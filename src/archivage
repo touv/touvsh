@@ -4,7 +4,7 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 SCRIPT_NAME=`basename $0`
-function usage {
+usage() {
 
 cat <<EOF
 
@@ -83,21 +83,21 @@ VERSION=${VERSION:="1"}
 # }}}
 
 # {{{ Controles
-if [[ ${#} -eq 0 ]]
+if test ${#} -eq 0 
 then
     usage
 fi
-if [[ ! -d ${CHEMIN} ]]
+if test ! -d ${CHEMIN} 
     then
     echo "Repertoire [${CHEMIN}] incorrect"
     exit 1
 fi
-if [[ -z ${PREFIX} ]]
+if test -z ${PREFIX} 
 then
     echo "Nom vide !"
     exit 2
 fi
-if [[ -z "${SOURCE}" ]]
+if test -z "${SOURCE}" 
 then
     echo "Repertoire [${SOURCE}] incorrect"
     exit 3
@@ -113,7 +113,7 @@ ZDIFF=zdiff
 REVISION_OLD=`ls -1 ${CHEMIN}/${PREFIX}-${VERSION}.[0-9]* 2>/dev/null | tail -1 | xargs basename 2>/dev/null | cut -d"." -f2`
 REVISION=`expr $REVISION_OLD + 1 2>/dev/null`
 
-if [[ ${?} -ne 0 ]]
+if test ${?} -ne 0 
 then
     REVISION=1
 fi
@@ -123,7 +123,7 @@ ${GZIP} ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar
 
 ${ZDIFF} ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar.gz \
          ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION_OLD}.tar.gz 2>/dev/null >/dev/null
-if [[ ${?} -eq 0 ]]
+if test ${?} -eq 0 
 then
     # Pas de difference, on efface
     ${RM} ${CHEMIN}/${PREFIX}-${VERSION}.${REVISION}.tar.gz 2>/dev/null

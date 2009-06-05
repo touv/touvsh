@@ -4,7 +4,7 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 SCRIPT_NAME=`basename $0`
-function usage {
+usage() {
 
 cat <<EOF
 
@@ -70,16 +70,16 @@ done
 
 
 # {{{ Controles
-if [[ ${#} -eq 0 ]]
+if test ${#} -eq 0 
 then
     usage
 fi
-if [[ ! -d ${REPERTOIRE} ]]
+if test ! -d ${REPERTOIRE} 
     then
     echo "Repertoire [${REPERTOIRE}] incorrect"
     exit 1
 fi
-if [[ -z ${PREFIX} ]]
+if test -z ${PREFIX} 
     then
     echo "Nom vide !"
     exit 2
