@@ -1,3 +1,17 @@
 # TouvSH
 
 My personnal collection of shell scripts
+
+
+## to develop
+
+git clone https://github.com/touv/touvsh
+
+./autogen.sh
+./configure --prefix=$HOME/local
+make
+make install
+
+## to package
+
+make dist
