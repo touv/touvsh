@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(touvsh, 2.5)
-AC_CONFIG_SRCDIR(Makefile.am)
-AM_INIT_AUTOMAKE
+AC_INIT(Makefile.am)
+AM_INIT_AUTOMAKE(touvsh, 2.5)
+
 
 dnl vérifier que Automake est bien complet
 AM_SANITY_CHECK
@@ -12,5 +12,5 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 
 dnl liste des fichiers à générer
-AC_OUTPUT(Makefile src/Makefile README AUTHORS NEWS ChangeLog INSTALL)
+AC_OUTPUT(Makefile src/Makefile)
 
