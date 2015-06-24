@@ -1,0 +1,48 @@
+#!/bin/sh
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+usage() {
+
+cat <<EOF
+
+	SYNTAXE :
+		${SCRIPT_NAME} {THEME}
+
+	DETAILS :
+        Prise de notes
+
+	EXEMPLES :
+		$SCRIPT_NAME toto
+
+EOF
+    exit 0;
+}
+for argument in $*
+do
+    case $argument in
+        -h | --help )
+        usage
+        ;;
+        * )
+        ;;
+    esac
+done
+# }}}
+
+if test ${#} -ne 1
+then
+    usage
+fi
+
+AAAA=`date +%Y`
+MM=`date +%m`
+JJ=`date +%d`
+XX=$1
+FILE=$HOME/Boulot/Dossiers/${AAAA}/${AAAA}${MM}${JJ}-PN-${XX}.md
+
+touch ${FILE}
+${EDITOR:=gvim}  ${FILE}
+
+# vim: fdm=marker

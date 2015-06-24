@@ -5,8 +5,6 @@ bin_SCRIPTS = archivage \
 			  copie \
 			  cvs2CVS \
 			  mozilla-mail \
-			  novell-mount \
-			  ouvaton-backup \
 			  renomme \
 			  rsed \
 			  samba-mount \
@@ -14,11 +12,13 @@ bin_SCRIPTS = archivage \
 			  treeview \
 			  untgz \
 			  vignettes \
-			  wget-images
-			  
+			  wget-images \
+			  notes \
+			  proxy
+
 man_MANS = supprime.8 \
 		   rsed.8 \
 		   treeview.8
 
-EXTRA_DIST = $(bin_SCRIPTS) $(man_MANS) 
+EXTRA_DIST = $(bin_SCRIPTS) $(man_MANS)
 

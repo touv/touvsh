@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(Makefile.am)
-AM_INIT_AUTOMAKE(touvsh, 2.5)
+AM_INIT_AUTOMAKE(touvsh, 3.0)
 
 
 dnl vérifier que Automake est bien complet

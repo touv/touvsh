@@ -1,0 +1,66 @@
+# @author Nicolas Thouvenin <touv@ouvaton.org>
+# @license http://opensource.org/licenses/gpl-license.php GNU Public License
+# {{{ Header
+SCRIPT_NAME=`basename $0`
+usage() {
+
+cat <<EOF
+
+	SYNTAXE :
+		source ${SCRIPT_NAME}
+
+	DETAILS :
+        BASH Proxy switcher
+
+	EXEMPLES :
+		$SCRIPT_NAME on
+
+EOF
+    exit 0;
+}
+
+proxy() {
+	PROXY_HTTP_HOST=`gsettings get org.gnome.system.proxy.http host`
+	PROXY_HTTP_PORT=`gsettings get org.gnome.system.proxy.http port`
+	PROXY_HTTPS_HOST=`gsettings get org.gnome.system.proxy.https host`
+	PROXY_HTTPS_PORT=`gsettings get org.gnome.system.proxy.https port`
+	PROXY_FTP_HOST=`gsettings get org.gnome.system.proxy.ftp host`
+	PROXY_FTP_PORT=`gsettings get org.gnome.system.proxy.ftp port`
+	case $1 in
+		on)
+			MSG="Proxy switch ON"
+			echo "$MSG"
+			notify-send -i info "$MSG"
+			export http_proxy="http://$PROXY_HTTP_HOST:$PROXY_HTTP_PORT/"
+			export HTTP_PROXY=$http_proxy
+			export https_proxy="http://$PROXY_HTTPS_HOST:$PROXY_HTTPS_PORT/"
+			export HTTPS_PROXY=$https_proxy
+			export ftp_proxy="http://$PROXY_FTP_HOST:$PROXY_FTP_PORT/"
+			export FTP_PROXY=$ftp_proxy
+			export rsync_proxy=$http_proxy
+			export RSYNC_PROXY=$http_proxy
+
+			gsettings set org.gnome.system.proxy mode 'manual'
+			;;
+		off)
+			MSG="Proxy switch OFF"
+			echo "$MSG"
+			notify-send -i info "$MSG"
+			gsettings set org.gnome.system.proxy mode 'none'
+
+			unset http_proxy
+			unset https_proxy
+			unset ftp_proxy
+			unset rsync_proxy
+			unset HTTP_PROXY
+			unset HTTPS_PROXY
+			unset FTP_PROXY
+			unset RSYNC_PROXY
+			;;
+		*)
+		usage
+	esac
+}
+
+
+# vim: fdm=marker
