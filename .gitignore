@@ -27,3 +27,9 @@ Makefile.in
 *.o
 .deps
 *.exe
+/README
+/AUTHORS
+/NEWS
+/ChangeLog
+/config.log
+/INSTALL
