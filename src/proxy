@@ -2,10 +2,12 @@
 # @license http://opensource.org/licenses/gpl-license.php GNU Public License
 # {{{ Header
 proxy() {
+	export NO_PROXY=127.0.0.1,localhost
+
 	PROXY_HTTP_HOST=`gsettings get org.gnome.system.proxy.http host| tr -d "'"`
 	PROXY_HTTP_PORT=`gsettings get org.gnome.system.proxy.http port`
-	PROXY_HTTPS_HOST=`gsettings get org.gnome.system.proxy.https host`
-	PROXY_HTTPS_PORT=`gsettings get org.gnome.system.proxy.https port| tr -d "'"`
+	PROXY_HTTPS_HOST=`gsettings get org.gnome.system.proxy.https host| tr -d "'"`
+	PROXY_HTTPS_PORT=`gsettings get org.gnome.system.proxy.https port`
 	PROXY_FTP_HOST=`gsettings get org.gnome.system.proxy.ftp host| tr -d "'"`
 	PROXY_FTP_PORT=`gsettings get org.gnome.system.proxy.ftp port`
 	case $1 in
