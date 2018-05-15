@@ -43,6 +43,6 @@ XX=$1
 FILE=$HOME/Boulot/Dossiers/${AAAA}/${AAAA}${MM}${JJ}-PN-${XX}.md
 
 touch ${FILE}
-${EDITOR:=gvim}  ${FILE}
+${EDITOR:=typora}  ${FILE}
 
 # vim: fdm=marker
