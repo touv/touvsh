@@ -8,13 +8,13 @@ usage() {
 cat <<EOF
 
 	SYNTAXE :
-		${SCRIPT_NAME} {THEME}
+		${SCRIPT_NAME} sujet tag
 
 	DETAILS :
-        Prise de notes
+        Prise de notes en mode suivi d'activité
 
 	EXEMPLES :
-		$SCRIPT_NAME toto
+		$SCRIPT_NAME toto blague
 
 EOF
     exit 0;
@@ -31,7 +31,7 @@ do
 done
 # }}}
 
-if test ${#} -ne 1
+if test ${#} -ne 2
 then
     usage
 fi
@@ -44,13 +44,14 @@ AAAA=`date +%Y`
 MM=`date +%m`
 JJ=`date +%d`
 XX=$1
-NAME=${AAAA}/${AAAA}${MM}${JJ}-PN-${XX}.md
+NAME=${AAAA}/${AAAA}${MM}${JJ}-SP-${XX}.md
 FILE=$HOME/Boulot/Dossiers/${NAME}
 NAME_ENCODED=$(urlencode "$NAME")
 FILE_ENCODED=$(urlencode "$FILE")
 VAULT=Dossiers
 LOCATION=`dirname $FILE`
-TAG=$(printf '%s' "$XX" | tr '-' '/')
+TAG1=$(printf '%s' "$XX" | tr '-' '/')
+TAG2=$(printf '%s' "$2" | tr '-' '/')
 
 mkdir -p $LOCATION
 
@@ -58,9 +59,26 @@ if [ ! -f "$FILE" ]; then
    cat <<EOF > ${FILE}
 ---
 created: ${AAAA}-${MM}-${JJ}
-type: "Prise de notes"
-tags: [${TAG}]
+type: "Suivi de projet"
+project: ${TAG1}
+tags: [${TAG2}]
 ---
+
+# Jalons
+- [ ] 
+- [ ] 
+
+# Journal
+
+## le ${JJ} ${MM} ${AAAA}
+
+
+EOF
+
+else 
+   cat <<EOF >> ${FILE}
+
+## le ${JJ} ${MM} ${AAAA}
 
 EOF
 

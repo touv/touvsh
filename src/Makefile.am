@@ -14,6 +14,7 @@ bin_SCRIPTS = archivage \
 			  vignettes \
 			  wget-images \
 			  notes \
+			  suivi \
 			  proxy
 
 man_MANS = supprime.8 \
